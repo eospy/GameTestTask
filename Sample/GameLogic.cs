@@ -16,14 +16,15 @@ namespace Sample
         const string chars = "abcdefghilklmnopqrstuvwxyz0123456789";
         public ConcurrentBag<Player> players;
         public ConcurrentBag<Vehicle> vehicles;
-        int freevehicles=200;
+        int freevehicles;
         public int carscount;
         public int playerscount;
-        public GameLogic(int cars,int playercount)
+        public GameLogic(int cars, int playercount)
         {
             _random = new Random();
-            carscount=cars;
-            playerscount= playercount;
+            carscount = cars;
+            freevehicles = cars;
+            playerscount = playercount;
             players = new ConcurrentBag<Player>();
             vehicles = new ConcurrentBag<Vehicle>();
         }
@@ -49,21 +50,21 @@ namespace Sample
                                 {
                                     car.Driver = player;
                                     player.Vehicle = car;
-                                    player.Coordinate=car.Coordinate;
+                                    player.Coordinate = car.Coordinate;
                                 }
                                 else if (car.Passengers.Count < 3)
                                 {
                                     car.Passengers.Add(player);
                                     player.Vehicle = car;
-                                    player.Coordinate=car.Coordinate;
+                                    player.Coordinate = car.Coordinate;
                                 }
-                                
+
                             }
                         }
                     }
                 }
             }
-            
+
         }
         //создание списков
         public void FillLists()
@@ -73,7 +74,7 @@ namespace Sample
                 if (i < carscount)
                 {
                     vehicles.Add(GenerateNewVehicle());
-                } 
+                }
                 players.Add(GenerateNewPlayer());
             }
 
@@ -83,12 +84,10 @@ namespace Sample
         {
             List<Player> list = new();
             int x = player.Coordinate.X;
-            int y= player.Coordinate.Y;
-            return players.Where(p =>
-                Math.Pow(p.Coordinate.X - x, 2) < 15
-                &&
-                Math.Pow(p.Coordinate.Y - y, 2) < 15
-                &&p!=player).ToList();
+            int y = player.Coordinate.Y;
+            return players.Where(p => Coordinate.Compare(player.Coordinate, p.Coordinate) < 15
+                && p != player).ToList();
+            Console.WriteLine();
         }
         public Vehicle GetRandomVehicle()
         {
@@ -108,7 +107,7 @@ namespace Sample
         {
             return new string(Enumerable.Repeat(chars, length).Select(s => s[_random.Next(s.Length)]).ToArray());
         }
-        
+
         public static Player GenerateNewPlayer()
         {
             return new Player(GetRandomString(7), GetRandomCoordinate());
