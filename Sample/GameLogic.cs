@@ -82,12 +82,10 @@ namespace Sample
         //игроки в окрестности
         public List<Player> GetPlayersAround(Player player)
         {
-            List<Player> list = new();
             int x = player.Coordinate.X;
             int y = player.Coordinate.Y;
             return players.Where(p => Coordinate.Compare(player.Coordinate, p.Coordinate) < 15
                 && p != player).ToList();
-            Console.WriteLine();
         }
         public Vehicle GetRandomVehicle()
         {
